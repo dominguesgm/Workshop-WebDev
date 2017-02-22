@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Página de pesquisa</title>
+	<title>PÃ¡gina de pesquisa</title>
 	<meta charset="UTF-8">
 </head>
 <body>
 
-<h1>Página de Pesquisa</h1>
+<h1>PÃ¡gina de Pesquisa</h1>
 
 <br/><br/>
 
@@ -20,7 +20,7 @@
                 <td><input value="<?php echo @$_GET['nome']; ?>" type=text name="nome"/></td>
             </tr>
             <tr>
-                <td><label for=name>Descrição: </label></td>
+                <td><label for=name>DescriÃ§Ã£o: </label></td>
                 <td><input value="<?php echo @$_GET['descricao']; ?>" type=text name="descricao"/></td>
             </tr>
             <tr>
@@ -38,29 +38,18 @@
 </div>
 
 <?php
+include_once('../php/query_function.php');
+include_once('../php/print_document.php');
 
 if(isset($_GET['nome'])){
+    
+    
     echo "<h2>Resultados da pesquisa</h2>";
 
-    $dbh=new PDO("mysql:host=haxor.fe.up.pt;dbname=workshop", "workshop", "nuieeews");
+    $results = query($_GET['nome'], $_GET['autor'], $_GET['descricao'], $_GET['cadeira']);
 
-    $nome=$_GET["nome"];
-    $query=$dbh->prepare("SELECT * FROM apontamentos, cadeiras WHERE apontamentos.cadeira = cadeiras.id
-       AND (sigla LIKE :nomeCadeira OR cadeiras.nome LIKE :nomeCadeira)
-       AND apontamentos.nome LIKE %:nomeApontamento%
-       AND descricao LIKE %:descricao%
-       AND autor LIKE %:autor%");
-
-    $query->bindParam(':nomeCadeira',           $_GET['cadeira']);
-    $query->bindParam(':nomeApontamento',       $_GET['nome']);
-    $query->bindParam(':descricao',             $_GET['descricao']);
-    $query->bindParam(':autor',                 $_GET['autor']);
-    $q=$query->execute();
-    
-
-    echo "<pre>";
-    while($result = $query->fetch(PDO::FETCH_ASSOC)){
-        print_r($result);    
+    foreach($results as $result){
+        displayResultItem($result);
     }
     
 }
